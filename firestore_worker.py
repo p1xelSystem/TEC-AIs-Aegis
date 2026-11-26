@@ -131,7 +131,7 @@ def fields(doc):
 def outcome(text):
     if text.strip() == "[NO RESPONSE][END NO RESPONSE]":
         return None
-      match = re.fullmatch(r"\s*\[FINAL RESPONSE\](.*?)(?:\[END FINAL RESPONSE\])?\s*", text, re.S)
+    match = re.fullmatch(r"\s*\[FINAL RESPONSE\](.*?)(?:\[END FINAL RESPONSE\])?\s*", text, re.S)
     if not match:
         raise RuntimeError("Model output rejected: invalid outcome block")
     body = match[1].strip()
