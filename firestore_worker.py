@@ -589,6 +589,8 @@ async def handle(w, project, room, name, msg, sending, pause, last_send, rng=ran
 
 
 async def main():
+    if not PROJECT_KEYS:
+        raise RuntimeError("Missing or invalid FIREBASE_KEYS secret")
     if not os.getenv("GROQ_API_KEY"):
         raise RuntimeError("Missing environment variables: GROQ_API_KEY")
     needed = ["personas/shared.txt"] + ["personas/%s.txt" % c for c in CHARACTERS]
