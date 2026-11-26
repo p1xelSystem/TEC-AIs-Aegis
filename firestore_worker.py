@@ -413,6 +413,7 @@ class Worker:
                 ],
                 "target_message": str(target.get("content", ""))[:1500],
                 "addressed_directly": not ambient,
+                            
             })},
         ]
 
@@ -421,7 +422,7 @@ class Worker:
             payload = {
                 "model": model,
                 "temperature": _float("GROQ_TEMPERATURE", "0.8"),
-                "max_completion_tokens": 1200,
+                "max_completion_tokens": 2000,
                 "messages": messages,
             }
             if "gpt-oss" in model:
@@ -441,6 +442,7 @@ class Worker:
         try:
             return outcome(content)
         except RuntimeError:
+            log.warning("Rejected output starts: %r", content[:120])
             messages.append({"role": "assistant", "content": content})
             messages.append({"role": "user", "content": (
                 "Return exactly one valid outcome block: [FINAL RESPONSE]reply"
