@@ -5,7 +5,13 @@ import unittest
 from unittest.mock import AsyncMock, patch
 
 import httpx
+import json
+import os
 
+os.environ.setdefault(
+    "FIREBASE_KEYS",
+    json.dumps({"tec-chat%d" % i: "test-key-%d" % i for i in range(1, 6)}),
+)
 import firestore_worker as worker
 from firestore_http import error_detail, fetch, retry_after
 
