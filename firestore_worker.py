@@ -131,7 +131,7 @@ def fields(doc):
 def outcome(text):
     if text.strip() == "[NO RESPONSE][END NO RESPONSE]":
         return None
-    match = re.fullmatch(r"\s*\[FINAL RESPONSE\](.*?)\[END FINAL RESPONSE\]\s*", text, re.S)
+      match = re.fullmatch(r"\s*\[FINAL RESPONSE\](.*?)(?:\[END FINAL RESPONSE\])?\s*", text, re.S)
     if not match:
         raise RuntimeError("Model output rejected: invalid outcome block")
     body = match[1].strip()
@@ -413,7 +413,7 @@ class Worker:
                 ],
                 "target_message": str(target.get("content", ""))[:1500],
                 "addressed_directly": not ambient,
-                            
+                "reply_format": "Wrap your reply as [FINAL RESPONSE]text[END FINAL RESPONSE], or output [NO RESPONSE][END NO RESPONSE] to stay silent.",
             })},
         ]
 
@@ -427,11 +427,18 @@ class Worker:
             }
             if "gpt-oss" in model:
                 payload["reasoning_effort"] = "low"
-            r = await self.request(
-                "POST", "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": "Bearer " + os.environ["GROQ_API_KEY"]},
-                json=payload,
-            )
+            for attempt in range(2):
+                try:
+                    r = await self.request(
+                        "POST", "https://api.groq.com/openai/v1/chat/completions",
+                        headers={"Authorization": "Bearer " + os.environ["GROQ_API_KEY"]},
+                        json=payload,
+                    )
+                    break
+                except RateLimited as exc:
+                    if attempt == 1:
+                        raise
+                    await asyncio.sleep(min(exc.retry_after, 30))
             choice = r.json()["choices"][0]
             msg = choice["message"]
             if choice.get("finish_reason") != "stop" or msg.get("tool_calls"):
