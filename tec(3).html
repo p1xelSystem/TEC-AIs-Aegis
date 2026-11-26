@@ -1,0 +1,316 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Escape Code Official Fan Site</title><style>
+:root{--primary:#00d4ff;--accent:#ffd700;--danger:#ff0055;--success:#28e0a0;--bg-0:#030a14;--bg-1:#08162a;--bg-2:#0e2240;--bg-3:#16305a;--border:rgba(0,212,255,.28);--border-active:rgba(0,212,255,.65);--text:#eaf6ff;--text-dim:#9fb8d6;--text-faint:#6a85a8;--glow:rgba(0,212,255,.4);--radius:12px;--font:'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--bg-0);color:var(--text)}
+button{font-family:inherit;cursor:pointer}
+input{width:100%;background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:11px 14px;border-radius:var(--radius);font-size:.9rem;outline:none;margin-bottom:10px}
+input:focus{border-color:var(--primary)}
+.btn{background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:9px 16px;border-radius:var(--radius);font-weight:600}
+.btn:hover{border-color:var(--border-active)}.btn.primary{background:var(--primary);color:#02121c;border-color:var(--primary)}.btn.danger{border-color:var(--danger);color:var(--danger)}
+.logo{font-weight:800;font-size:2rem;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#authScreen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px}
+.card{background:var(--bg-1);border:1px solid var(--border-active);border-radius:20px;padding:28px;width:100%;max-width:400px;box-shadow:0 0 40px var(--glow)}
+.tabs{display:flex;gap:6px;margin:16px 0}.tabs button{flex:1}.tabs .on{background:var(--primary);color:#02121c;border-color:var(--primary)}
+#authMsg{min-height:20px;font-size:.8rem;margin:6px 0;color:var(--danger)}#authMsg.ok{color:var(--success)}
+#app{display:none;height:100%}
+.side{width:240px;background:var(--bg-1);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.side .head{padding:16px;border-bottom:1px solid var(--border)}
+.nav{flex:1;padding:8px;display:flex;flex-direction:column;gap:2px}
+.nav button{text-align:left;background:none;border:none;color:var(--text-dim);padding:10px 14px;border-radius:var(--radius);font-weight:600}
+.nav button:hover{background:var(--bg-2);color:var(--text)}.nav button.on{background:var(--bg-3);color:var(--text)}
+.chip{padding:12px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.av{width:34px;height:34px;border-radius:50%;background:var(--primary);color:#02121c;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.tag{font-size:.55rem;font-weight:900;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:5px;border:1px solid;margin-left:6px;vertical-align:middle}
+.tag.owner{background:linear-gradient(135deg,#0b3d91,#1e90ff);color:#ffd700;border-color:#ffd700}
+.tag.member{color:var(--text-dim);border-color:var(--border)}.tag.mod{color:#d6a4ff;border-color:rgba(160,32,240,.5)}.tag.admin{color:#ff4d88;border-color:rgba(255,0,85,.6)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:52px;border-bottom:1px solid var(--border);background:var(--bg-1);display:flex;align-items:center;padding:0 16px;font-weight:700}
+.panel{display:none;padding:24px;overflow:auto;flex:1}.panel.on{display:block}
+#p-community.on{overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}.row .grow{flex:1;min-width:0}
+select{background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:6px 10px;border-radius:8px}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--bg-2);border:1px solid var(--border-active);padding:10px 20px;border-radius:var(--radius);display:none;z-index:99}
+.chat{display:flex;height:100%;margin:-24px}
+.chans{width:210px;background:var(--bg-1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:auto;flex-shrink:0}
+.chans .lab{font-size:.65rem;font-weight:800;letter-spacing:1.5px;color:var(--text-faint);padding:12px 12px 4px;text-transform:uppercase}
+.chan{padding:8px 12px;margin:1px 6px;border-radius:8px;color:var(--text-dim);font-weight:600;cursor:pointer;display:flex;align-items:center}
+.chan:hover{background:var(--bg-2);color:var(--text)}.chan.on{background:var(--primary);color:#02121c}
+.chan .ub{margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px}
+.cmain{flex:1;display:flex;flex-direction:column;min-width:0}
+.chead{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;font-weight:800}
+.chead input{width:170px;margin:0;padding:6px 10px;font-size:.78rem;margin-left:auto}
+#feed{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.msg{display:flex;gap:10px;padding:5px 8px;border-radius:10px;position:relative}.msg:hover{background:rgba(255,255,255,.04)}
+.msg.flash{background:rgba(0,212,255,.18)}
+.msg .nm{font-weight:800}.msg .tm{font-size:.65rem;color:var(--text-faint);margin-left:8px}.msg .ed{font-size:.62rem;color:var(--text-faint);margin-left:6px}
+.msg .tx{white-space:pre-wrap;word-break:break-word;line-height:1.45;margin-top:2px}
+.msg.ann .tx{background:rgba(255,215,0,.1);border-left:3px solid var(--accent);color:var(--accent);padding:6px 10px;border-radius:0 8px 8px 0}
+.acts{display:none;position:absolute;top:-10px;right:8px;background:var(--bg-2);border:1px solid var(--border-active);border-radius:8px;padding:2px;gap:2px}
+.msg:hover .acts{display:flex}
+.acts button{background:none;border:none;color:var(--text-dim);font-size:.7rem;padding:4px 7px;border-radius:5px}.acts button:hover{background:var(--primary);color:#02121c}
+.rq{border-left:3px solid var(--accent);background:rgba(0,212,255,.08);padding:3px 10px;border-radius:0 6px 6px 0;font-size:.72rem;color:var(--text-dim);margin-bottom:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:480px}
+.rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.rc{border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);border-radius:50px;padding:1px 9px;font-size:.78rem}
+.rc.me{background:rgba(0,212,255,.25);border-color:var(--border-active)}
+.picker{position:fixed;z-index:200;background:var(--bg-2);border:1px solid var(--border-active);border-radius:12px;padding:8px;display:grid;grid-template-columns:repeat(8,1fr);gap:2px}
+.picker button{background:none;border:none;font-size:1.1rem;padding:4px;border-radius:8px}.picker button:hover{background:var(--bg-3)}
+.bar{display:none;justify-content:space-between;align-items:center;padding:6px 16px;background:rgba(0,212,255,.1);font-size:.78rem}
+.bar button{padding:3px 10px;font-size:.7rem}
+#typing{min-height:20px;padding:2px 18px;font-size:.75rem;color:var(--text-faint)}
+#sendStatus{font-size:.72rem;color:var(--text-dim);padding:0 18px}
+.composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);align-items:flex-end}
+.composer textarea{flex:1;resize:none;background:var(--bg-2);color:#00ffcc;border:1px solid var(--primary);border-radius:20px;padding:11px 16px;font-family:Consolas,monospace;outline:none;max-height:120px}
+@media(max-width:700px){.side{display:none}.chans{width:120px}}
+#p-home{padding:0;scroll-behavior:smooth}#p-home .tec-home{--bg:#101624;--cyan:#50e6ef;--gold:#ffd36a;--ink:#eef6ff;--muted:#aab9cc;--line:#34435a;--pink:#f383ae;--green:#9de6bb;min-height:100%;background:radial-gradient(ellipse at 50% -20%,#27435d 0,transparent 55%),var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}#p-home .tec-home{box-sizing:border-box}#p-home .tec-home a{color:var(--cyan);text-decoration:none}#p-home .tec-home a:hover{text-decoration:underline}#p-home .tec-home .wrap{width:min(1120px,92%);margin:auto}#p-home .tec-home header{padding:30px 0 18px;border-bottom:1px solid var(--line);background:#101624dd}#p-home .tec-home .brand{display:flex;align-items:center;gap:15px}#p-home .tec-home .sigil{width:58px;height:58px;border-radius:18px;background:linear-gradient(145deg,#123a53,#182235);border:1px solid #3f7189;display:grid;place-items:center;font-size:30px;box-shadow:0 0 24px #50e6ef22}#p-home .tec-home .brand h1{font-size:clamp(1.7rem,4vw,2.8rem);line-height:1.1;margin:0;letter-spacing:.04em}#p-home .tec-home .brand p{margin:5px 0 0;color:var(--muted)}#p-home .tec-home nav{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}#p-home .tec-home nav a{color:var(--ink);padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:#ffffff08;font-size:.92rem}#p-home .tec-home nav a:hover{border-color:var(--cyan);text-decoration:none}#p-home .tec-home .hero{padding:45px 0 25px;display:grid;grid-template-columns:1.35fr .65fr;gap:22px;align-items:stretch}#p-home .tec-home .hero-main,#p-home .tec-home .hero-side,#p-home .tec-home .card{background:linear-gradient(145deg,#1b293d,#151f30);border:1px solid var(--line);border-radius:20px;padding:25px;box-shadow:0 14px 35px #0002}#p-home .tec-home .eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.16em;font-weight:800;font-size:.76rem}#p-home .tec-home .hero h2{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;margin:10px 0 15px}#p-home .tec-home .hero h2 span{color:var(--gold)}#p-home .tec-home .hero-main>p{color:var(--muted);max-width:65ch}#p-home .tec-home .buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}#p-home .tec-home .btn{display:inline-block;background:var(--cyan);color:#0c1722;padding:10px 16px;border-radius:10px;font-weight:800;border:0}#p-home .tec-home .btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}#p-home .tec-home .hero-side{display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,#1b3850,#192238)}#p-home .tec-home .hero-side .crown{font-size:46px}#p-home .tec-home .hero-side h3{margin:2px 0 8px;color:var(--gold)}#p-home .tec-home .hero-side p{margin:0;color:var(--muted)}#p-home .tec-home main{padding-bottom:45px}#p-home .tec-home .section{margin:30px 0}#p-home .tec-home .section-title{display:flex;align-items:baseline;justify-content:space-between;gap:15px;margin-bottom:14px}#p-home .tec-home .section-title h2{font-size:1.55rem;margin:0}#p-home .tec-home .section-title small{color:var(--muted)}#p-home .tec-home .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}#p-home .tec-home .card h3{margin:0 0 8px}#p-home .tec-home .card p{color:var(--muted);margin:0}#p-home .tec-home .tag{display:inline-block;font-size:.74rem;color:#101624;background:var(--gold);padding:2px 9px;border-radius:99px;font-weight:800;margin-bottom:10px}#p-home .tec-home .tag.cyan{background:var(--cyan)}#p-home .tec-home .tag.pink{background:var(--pink)}#p-home .tec-home .tag.green{background:var(--green)}#p-home .tec-home .split{display:grid;grid-template-columns:1fr 1fr;gap:15px}#p-home .tec-home .character{position:relative;overflow:hidden;min-height:155px}#p-home .tec-home .character:after{content:attr(data-icon);position:absolute;right:16px;bottom:-18px;font-size:82px;opacity:.16}#p-home .tec-home .character p{max-width:38ch}#p-home .tec-home .quote{border-left:3px solid var(--cyan);padding:12px 16px;background:#ffffff06;border-radius:0 12px 12px 0;color:#dce8f6;margin:0}#p-home .tec-home .quote cite{display:block;color:var(--muted);font-size:.85rem;margin-top:7px;font-style:normal}#p-home .tec-home .episode-list{padding:0;margin:0;list-style:none}#p-home .tec-home .episode-list li{padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}#p-home .tec-home .episode-list li:last-child{border:0}#p-home .tec-home .episode-list span{color:var(--muted);font-size:.9rem}#p-home .tec-home .fanbox{background:linear-gradient(110deg,#17334a,#22223a);border:1px solid #426079;border-radius:18px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:20px}#p-home .tec-home .fanbox h2{margin:0 0 5px}#p-home .tec-home .fanbox p{color:var(--muted);margin:0}#p-home .tec-home .fanbox .btn{white-space:nowrap}#p-home .tec-home footer{border-top:1px solid var(--line);padding:22px 0 35px;color:var(--muted);font-size:.9rem}#p-home .tec-home .footerrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}#p-home .tec-home .disclaimer{max-width:75ch;font-size:.82rem;margin-top:10px}#p-home .tec-home .official-art{padding-top:32px;text-align:center}#p-home .tec-home .official-art img{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 60px #0006}#p-home .tec-home .official-art p{margin:12px 0 0;color:var(--muted);font-size:.9rem}@media(max-width:800px){#p-home .tec-home .hero{grid-template-columns:1fr}#p-home .tec-home .grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){#p-home .tec-home .grid,#p-home .tec-home .split{grid-template-columns:1fr}#p-home .tec-home .hero-main,#p-home .tec-home .hero-side,#p-home .tec-home .card{padding:19px}#p-home .tec-home .fanbox{align-items:flex-start;flex-direction:column}#p-home .tec-home .section-title{align-items:flex-start;flex-direction:column}#p-home .tec-home .episode-list li{display:block}#p-home .tec-home .episode-list span{display:block}}#p-home .tec-home *{box-sizing:border-box}#p-home .tec-home .tag{border:0;margin-left:0;letter-spacing:0;text-transform:none;vertical-align:baseline}#p-home .tec-home .card{max-width:none;width:auto}
+</style></head><body>
+<div id="authScreen"><div class="card"><div class="logo">The Escape Code Official Fan Site</div>
+<div class="tabs"><button class="btn on" id="tabIn" onclick="setMode('in')">Sign in</button><button class="btn" id="tabUp" onclick="setMode('up')">Create account</button></div>
+<input id="fName" placeholder="Display name (2-20 characters)" maxlength="20" style="display:none">
+<input id="fEmail" type="email" placeholder="Email" autocomplete="email">
+<input id="fPass" type="password" placeholder="Password (6+ characters)">
+<div id="authMsg"></div>
+<button class="btn primary" style="width:100%" id="authGo" onclick="submitAuth()">Sign in</button>
+<button class="btn" style="width:100%;margin-top:8px;font-size:.8rem" onclick="resetPw()">Forgot password</button></div></div>
+<div id="app">
+<aside class="side"><div class="head"><span class="logo" style="font-size:1.3rem">The Escape Code Official Fan Site</span></div>
+<div class="nav" id="nav"><button data-v="home" class="on">Home</button><button data-v="community">Community</button><button data-v="people">People</button><button data-v="settings">Settings</button><button data-v="admin" id="adminNav" style="display:none">Admin</button></div>
+<div class="chip"><div class="av" id="myAv">?</div><div style="min-width:0"><div id="myName" style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div><div style="font-size:.7rem;color:var(--text-faint)" id="myRole"></div></div></div></aside>
+<div class="main"><div class="top" id="topTitle">Home</div>
+<div class="panel on" id="p-home"><div class="tec-home">
+<header><div class="wrap">
+<div class="brand"><div class="sigil" aria-hidden="true">⌘</div><div><h1>THE ESCAPE CODE</h1><p>Official home for TEC fans · The place for theories, characters, and questionable vent decisions</p></div></div>
+<nav aria-label="Main navigation"><a href="#welcome">Home</a><a href="#characters">Characters</a><a href="#story">Story files</a><a href="#quotes">Quote archive</a><a href="#fan-corner">Fan corner</a></nav>
+</div></header>
+<section class="wrap official-art" aria-label="Official cover artwork">
+<img src="The_Escape_Code_P1xel.jpg" alt="The Escape Code by P1xel. Dylan hangs upside down above Miko in his grey hoodie, while Mira works at a laptop beside the cyan hologram Aegis. Security drones surround the Central Core." width="1024" height="1536">
+<p>Official cover · The Escape Code · P1xel</p>
+</section>
+<div class="wrap">
+<section class="hero" id="welcome"><div class="hero-main"><div class="eyebrow">Access granted · Author-Created</div><h2>One code. One crew.<br><span>Absolutely no vent safety.</span></h2><p>Welcome, escapees. Explore the world of <em>The Escape Code</em>—a sci-fi adventure. Meet the crew, including a security bot who may or may not be strategically lodged in a vent, and dive into the mysteries behind the code. This site and the original work, <em>The Escape Code</em>, were created by P1xel.</p><div class="buttons"><a class="btn" href="#characters">Meet the crew</a><a class="btn alt" href="#story">Open the story files</a></div></div><aside class="hero-side"><div class="crown" aria-hidden="true">👑</div><h3>Aegis says:</h3><p>“Welcome to the fan hub. Please keep all unauthorized root access, suspiciously loose screws, and toaster jokes within designated areas.”</p></aside></section>
+<main>
+<section class="section" id="characters"><div class="section-title"><h2>Meet the crew</h2><small>Profiles compiled with only minor editorial interference.</small></div><div class="grid">
+<article class="card character" data-icon="👑"><span class="tag cyan">Hologram · Former defense AI</span><h3>Aegis</h3><p>Sharp, clever, and professionally sarcastic. His crooked crown is practically a personality trait—and his knowledge of the facility may be the crew’s best chance.</p></article>
+<article class="card character" data-icon="🤖"><span class="tag">Security unit · Hoodie enthusiast</span><h3>Miko</h3><p>A well-meaning guard bot with a dramatic streak, a fragile sense of job security, and a talent for getting stuck. His empathy turns out to be more powerful than his rulebook.</p></article>
+<article class="card character" data-icon="⌨️"><span class="tag green">Hacker · The planner</span><h3>Mira</h3><p>Focused, resourceful, and hard to fool. Mira keeps the team moving, follows the evidence, and refuses to let a complicated system—or her family’s secrets—stop her.</p></article>
+<article class="card character" data-icon="⚡"><span class="tag pink">Brother · Chaos specialist</span><h3>Dylan</h3><p>Big enthusiasm, tiny impulse control. Dylan treats every obstacle like a sport, touches things he absolutely should not touch, and shows up when his friends need him.</p></article>
+<article class="card character" data-icon="🧭"><span class="tag">The mission</span><h3>The Escape Code</h3><p>The crew’s route runs through hidden tunnels, dangerous sectors, and the secrets of Aetheris. Getting out is only the beginning of the mystery.</p></article>
+<article class="card character" data-icon="🕸️"><span class="tag cyan">Big question</span><h3>Project Arachnid</h3><p>What was Aetheris hiding beneath the facility—and how are Mira’s family and the Escape Code connected to it?</p></article>
+</div></section>
+<section class="section" id="story"><div class="section-title"><h2>Story files</h2><small>Spoiler-light starting points</small></div><div class="split"><article class="card"><span class="tag cyan">The route</span><h3>From cell block to Central Core</h3><ul class="episode-list"><li><div><strong>First breach</strong><br><span>Mira, Dylan, Miko—and the suspiciously loose vent.</span></div><span>Start here</span></li><li><div><strong>Unexpected ally</strong><br><span>A forgotten AI joins the escape plan.</span></div><span>New teammate</span></li><li><div><strong>Three sectors</strong><br><span>Maintenance tunnels, the scrap yard, and a zero-gravity challenge.</span></div><span>Obstacle course</span></li><li><div><strong>The real objective</strong><br><span>The Escape Code leads to a much bigger truth.</span></div><span>Core mystery</span></li></ul></article><article class="card"><span class="tag pink">Fandom questions</span><h3>Things worth debating</h3><ul class="episode-list"><li><div><strong>Best accidental hero moment?</strong><br><span>Miko has several candidates.</span></div></li><li><div><strong>Most dangerous phrase?</strong><br><span>Probably “Can I press that?”</span></div></li><li><div><strong>Who has the best one-liners?</strong><br><span>Aegis would like this question removed.</span></div></li><li><div><strong>Which sector would you least want to enter?</strong><br><span>There are no safe answers.</span></div></li></ul></article></div></section>
+<section class="section" id="quotes"><div class="section-title"><h2>Quote archive</h2><small>For dramatic rereading and friendly quoting</small></div><div class="grid"><blockquote class="card quote">“I am not stuck. I am strategically lodged.”<cite>— Miko, making a strong case for the vent incident</cite></blockquote><blockquote class="card quote">“Touch another lever and I’m leaving you here.”<cite>— Mira, keeping the mission on track</cite></blockquote><blockquote class="card quote">“That was awesome. Can we do it again?”<cite>— Dylan, immediately after a bad idea works</cite></blockquote></div></section>
+<section class="section" id="fan-corner"><div class="fanbox"><div><h2>Your corner of the network</h2><p>Share fan art, favorite scenes, character theories, and your best Miko quotes. Keep it kind, credit creators, and mark major spoilers.</p></div><a class="btn" href="mailto:p1xelf1n158@outlook.com?subject=The%20Escape%20Code%20Fan%20Hub">Send a fan note</a></div></section>
+</main>
+</div>
+<footer><div class="wrap"><div class="footerrow"><span>THE ESCAPE CODE · Official fan hub</span><span>Built for fans by P1xel</span></div><p class="disclaimer">Be respectful, credit fan creators, and use spoiler warnings.</p></div></footer>
+</div></div>
+<div class="panel" id="p-community"><div class="chat">
+<div class="chans"><div class="lab">Server</div><div style="padding:0 10px"><select id="srvSel" style="width:100%" onchange="switchServer(+this.value)"></select></div>
+<div class="lab">Channels</div><div id="chanList"></div></div>
+<div class="cmain"><div class="chead"><span id="chanTitle">general</span><input id="searchIn" placeholder="Search loaded messages" oninput="applySearch()"></div>
+<div id="feed"></div>
+<div class="bar" id="editBar"><span>Editing message</span><button class="btn" onclick="cancelEdit()">Cancel</button></div>
+<div class="bar" id="replyBar"><span id="replyTxt"></span><button class="btn" onclick="cancelReply()">Cancel</button></div>
+<div id="typing"></div><div id="sendStatus"></div>
+<div class="composer"><textarea id="msgIn" rows="1" placeholder="Message... (Enter to send, Shift+Enter for new line)"></textarea><button class="btn" id="annBtn" style="display:none" onclick="sendMessage(true)">Announce</button><button class="btn primary" onclick="sendMessage(false)">Send</button></div></div></div></div>
+<div class="panel" id="p-people"><h2>People</h2><div id="peopleList" style="margin-top:12px"></div></div>
+<div class="panel" id="p-settings"><h2>Settings</h2><div style="margin:16px 0 6px;color:var(--text-dim)">Display name</div>
+<div style="display:flex;gap:8px;max-width:420px"><input id="newName" maxlength="20" placeholder="New display name" style="margin:0"><button class="btn primary" onclick="changeName()">Update</button></div>
+<div id="nameMsg" style="font-size:.8rem;margin:8px 0;color:var(--text-dim)"></div><button class="btn danger" style="margin-top:16px" onclick="signOutUser()">Sign out</button></div>
+<div class="panel" id="p-admin"><h2>Admin</h2><p style="color:var(--text-dim);margin:6px 0 12px">Only the owner can change roles or ban accounts.</p><div id="adminList"></div></div>
+</div></div><div id="toast"></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+const OWNER_EMAILS=['p1xelf1n158@outlook.com'];
+const firebaseConfig={apiKey:"AIzaSyCFJet999Gm9GHZSqKKt5BTsmn1rkZ_q-k",authDomain:"tec-main-504c2.firebaseapp.com",projectId:"tec-main-504c2",storageBucket:"tec-main-504c2.firebasestorage.app",messagingSenderId:"418852800904",appId:"1:418852800904:web:f910cfce2f7550962f923d"};
+const CHAT_CONFIGS=[
+{apiKey:"AIzaSyA4LLeRoOsn75Mzs6orIq-orHvSl_Ta7ug",authDomain:"tec-chat1.firebaseapp.com",projectId:"tec-chat1",storageBucket:"tec-chat1.firebasestorage.app",messagingSenderId:"5162417989",appId:"1:5162417989:web:aab0497396c5ed2838082c"},
+{apiKey:"AIzaSyDRrqm2BMs3bGiRBtZ8S0zj-Uv-Enk5Xxc",authDomain:"tec-chat2.firebaseapp.com",projectId:"tec-chat2",storageBucket:"tec-chat2.firebasestorage.app",messagingSenderId:"56459932880",appId:"1:56459932880:web:5589b416643725223e9ad5"},
+{apiKey:"AIzaSyAn8QQDuuj5RaRb6A8lIetZRKAe-nZ_skE",authDomain:"tec-chat3.firebaseapp.com",projectId:"tec-chat3",storageBucket:"tec-chat3.firebasestorage.app",messagingSenderId:"372514962223",appId:"1:372514962223:web:883835c5b1a93b5d6e3fda"},
+{apiKey:"AIzaSyASriwP6yjf_cb9f81RXsVsCFMTSoP3H5Q",authDomain:"tec-chat4.firebaseapp.com",projectId:"tec-chat4",storageBucket:"tec-chat4.firebasestorage.app",messagingSenderId:"731997431862",appId:"1:731997431862:web:dffd330065fd522a179097"},
+{apiKey:"AIzaSyCNq3x5AdTFtmHlR8Oqmy84Nd0pmRWQRC4",authDomain:"tec-chat5.firebaseapp.com",projectId:"tec-chat5",storageBucket:"tec-chat5.firebasestorage.app",messagingSenderId:"677314673525",appId:"1:677314673525:web:5a2cba6a86b992b8af713c"}];
+const CHANNELS=[{id:'general',name:'general',ai:false},{id:'offtopic',name:'off-topic',ai:false},{id:'mira',name:'Mira',ai:true},{id:'dylan',name:'Dylan',ai:true},{id:'miko',name:'Miko',ai:true},{id:'aegis',name:'Aegis',ai:true},{id:'astra',name:'Astra',ai:true}];
+const EMOJIS=['👍','❤️','😂','😮','😢','🔥','🎉','👀','✅','❌','💯','🙏','😎','🤔','👏','💀'];
+const STAFF=['owner','admin','mod'];
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
+const chatApps=CHAT_CONFIGS.map((c,i)=>{const a=firebase.initializeApp(c,'chat'+(i+1));return{db:a.firestore(),auth:a.auth(),ready:null}});
+const $=id=>document.getElementById(id);
+const isOwnerEmail=e=>OWNER_EMAILS.includes(String(e||'').trim().toLowerCase());
+const isStaff=()=>myProfile&&STAFF.includes(myProfile.role);
+let mode='in',me=null,myProfile=null,signingUp=false,bootedChat=false;
+let srv=Math.min(4,Math.max(0,parseInt(localStorage.getItem('tec_server')||'0')||0)),chan='general';
+let unsubs=[],docsCache=[],replyTo=null,editing=null,typingMap={},lastTypingWrite=0,typingTimer=null,initialLoad=true;
+let unreadCounts={},lastSeen={};
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2500)}
+function show(id){$('authScreen').style.display='none';$('app').style.display='none';if(id==='app')$('app').style.display='flex';else $(id).style.display='flex'}
+function setMode(m){mode=m;$('tabIn').classList.toggle('on',m==='in');$('tabUp').classList.toggle('on',m==='up');$('fName').style.display=m==='up'?'block':'none';$('authGo').textContent=m==='up'?'Create account':'Sign in';$('authMsg').textContent=''}
+function msg(el,t,ok){el.textContent=t;el.className=ok?'ok':''}
+function friendly(e){const c=(e&&(e.code||''))||'';const m={'auth/invalid-email':'That email is not valid.','auth/email-already-in-use':'That email already has an account.','auth/weak-password':'Password needs at least 6 characters.','auth/user-not-found':'Wrong email or password.','auth/wrong-password':'Wrong email or password.','auth/invalid-credential':'Wrong email or password.','auth/too-many-requests':'Too many tries. Wait a bit.','auth/network-request-failed':'Network problem.','permission-denied':'Not allowed (check Firestore rules).'};return m[c]||(e&&e.message)||'Something went wrong.'}
+async function submitAuth(){
+ const email=$('fEmail').value.trim(),pass=$('fPass').value,name=$('fName').value.trim(),m=$('authMsg');
+ if(!email||!pass)return msg(m,'Enter email and password.');
+ try{
+  if(mode==='up'){
+   if(name.length<2||name.length>20)return msg(m,'Display name must be 2-20 characters.');
+   signingUp=true;
+   const cred=await auth.createUserWithEmailAndPassword(email,pass);
+   await cred.user.updateProfile({displayName:name});
+   await db.collection('users').doc(cred.user.uid).set({uid:cred.user.uid,email:email.toLowerCase(),displayName:name,role:'member',banned:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+   signingUp=false;boot(cred.user);
+  }else{await auth.signInWithEmailAndPassword(email,pass)}
+ }catch(e){signingUp=false;msg(m,friendly(e))}
+}
+async function resetPw(){const email=$('fEmail').value.trim(),m=$('authMsg');if(!email)return msg(m,'Type your email first.');try{await auth.sendPasswordResetEmail(email);msg(m,'Reset email sent.',true)}catch(e){msg(m,friendly(e))}}
+function stopListeners(){unsubs.forEach(f=>{try{f()}catch(e){}});unsubs=[]}
+function signOutUser(){clearTyping();stopListeners();auth.signOut()}
+async function boot(u){
+ me=u;const ref=db.collection('users').doc(u.uid);let snap=await ref.get();
+ if(!snap.exists){await ref.set({uid:u.uid,email:(u.email||'').toLowerCase(),displayName:u.displayName||'User',role:'member',banned:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});snap=await ref.get()}
+ myProfile=snap.data();
+ if(isOwnerEmail(u.email)&&myProfile.role!=='owner'){await ref.update({role:'owner'});myProfile.role='owner'}
+ if(myProfile.banned){alert('This account is banned.');return auth.signOut()}
+ renderMe();show('app');initChatUI();
+}
+function renderMe(){const n=myProfile.displayName||'User';$('myAv').textContent=n[0].toUpperCase();$('myName').textContent=n;$('myRole').textContent=myProfile.role;$('adminNav').style.display=myProfile.role==='owner'?'block':'none';$('annBtn').style.display=isStaff()?'':'none'}
+$('nav').addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));
+ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+ $('p-'+b.dataset.v).classList.add('on');$('topTitle').textContent=b.textContent;
+ if(b.dataset.v==='people')loadPeople();if(b.dataset.v==='admin')loadAdmin();if(b.dataset.v==='community')openChannel(chan);
+});
+/* ===== CHAT ===== */
+function ensureChatAuth(i){const c=chatApps[i];if(!c.ready)c.ready=c.auth.currentUser?Promise.resolve():c.auth.signInAnonymously().catch(e=>{c.ready=null;throw e});return c.ready}
+const msgCol=(i,ch)=>chatApps[i].db.collection('rooms').doc(ch).collection('messages');
+function initChatUI(){
+ if(bootedChat)return;bootedChat=true;
+ const s=$('srvSel');for(let i=0;i<5;i++){const o=document.createElement('option');o.value=i;o.textContent='Server '+(i+1);s.append(o)}s.value=srv;
+ const l=$('chanList');CHANNELS.forEach(c=>{const d=document.createElement('div');d.className='chan';d.id='ch-'+c.id;d.innerHTML='<span></span><span class="ub" style="display:none"></span>';d.firstChild.textContent=(c.ai?'':'# ')+c.name+(c.ai?' (AI)':'');d.onclick=()=>openChannel(c.id);l.append(d)});
+ const mi=$('msgIn');
+ mi.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage(false)}if(e.key==='Escape'){cancelEdit();cancelReply()}});
+ mi.addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(120,e.target.scrollHeight)+'px';pingTyping()});
+ document.addEventListener('click',e=>{if(!e.target.closest('.picker')&&!e.target.closest('[data-react]'))closePicker()});
+ typingTimer=setInterval(renderTyping,1500);
+ window.addEventListener('beforeunload',clearTyping);
+}
+function switchServer(i){if(i<0||i>4)return;clearTyping();srv=i;localStorage.setItem('tec_server',i);toast('Switched to Server '+(i+1));openChannel(chan)}
+async function openChannel(id){
+ clearTyping();stopListeners();cancelEdit();cancelReply();$('searchIn').value='';typingMap={};renderTyping();
+ chan=id;const c=CHANNELS.find(x=>x.id===id)||CHANNELS[0];
+ document.querySelectorAll('.chan').forEach(x=>x.classList.toggle('on',x.id==='ch-'+id));
+ $('chanTitle').textContent=(c.ai?'':'# ')+c.name;
+ const feed=$('feed');feed.innerHTML='<div style="color:var(--text-faint);margin:auto">Loading...</div>';
+ const mySrv=srv;initialLoad=true;
+ try{await ensureChatAuth(mySrv)}catch(e){feed.innerHTML='';const d=document.createElement('div');d.style.cssText='color:var(--danger);margin:auto;text-align:center';d.textContent='Could not connect to Server '+(mySrv+1)+'. ('+friendly(e)+')';feed.append(d);return}
+ if(mySrv!==srv||chan!==id)return;
+ unsubs.push(msgCol(mySrv,id).orderBy('createdAt','desc').limit(100).onSnapshot(snap=>{
+  const docs=[];snap.forEach(d=>docs.push({id:d.id,...d.data()}));docs.reverse();docsCache=docs;renderFeed();initialLoad=false
+ },err=>{feed.innerHTML='';const d=document.createElement('div');d.style.cssText='color:var(--danger);margin:auto';d.textContent=friendly(err);feed.append(d)}));
+ unsubs.push(chatApps[mySrv].db.collection('rooms').doc(id).collection('typing').onSnapshot(snap=>{
+  typingMap={};snap.forEach(d=>{const t=d.data();if(d.id!==me.uid&&t.at&&t.at.toMillis)typingMap[d.id]={name:t.name,at:t.at.toMillis()}});renderTyping()
+ },()=>{}));
+}
+function esc(s){return String(s==null?'':s)}
+function renderFeed(){
+ const feed=$('feed');const atBottom=feed.scrollHeight-feed.scrollTop-feed.clientHeight<120||initialLoad;feed.innerHTML='';
+ if(!docsCache.length){const d=document.createElement('div');d.style.cssText='color:var(--text-faint);margin:auto';d.textContent='No messages yet. Say hi!';feed.append(d);return}
+ docsCache.forEach(m=>{
+  const row=document.createElement('div');row.className='msg'+(m.isAnnouncement?' ann':'');row.id='m-'+m.id;row.dataset.text=(m.content||'').toLowerCase()+' '+(m.name||'').toLowerCase();
+  const av=document.createElement('div');av.className='av';av.textContent=(m.name||'?')[0].toUpperCase();
+  const body=document.createElement('div');body.style.minWidth='0';
+  if(m.replyTo){const q=document.createElement('div');q.className='rq';q.textContent='↪ '+esc(m.replyTo.name)+': '+esc(m.replyTo.text);q.onclick=()=>{const t=$('m-'+m.replyTo.id);if(t){t.scrollIntoView({block:'center'});t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),1200)}};body.append(q)}
+  const head=document.createElement('div');const nm=document.createElement('span');nm.className='nm';nm.textContent=m.name||'User';head.append(nm);
+  if(STAFF.includes(m.role)){const t=document.createElement('span');t.className='tag '+m.role;t.textContent=m.role;head.append(t)}
+  const tm=document.createElement('span');tm.className='tm';tm.textContent=m.createdAt&&m.createdAt.toDate?m.createdAt.toDate().toLocaleString([],{hour:'numeric',minute:'2-digit',month:'short',day:'numeric'}):'sending...';head.append(tm);
+  if(m.edited){const e=document.createElement('span');e.className='ed';e.textContent='(edited)';head.append(e)}
+  const tx=document.createElement('div');tx.className='tx';tx.textContent=m.content||'';
+  body.append(head,tx);
+  const rx=m.reactions||{};const keys=Object.keys(rx).filter(k=>rx[k]&&rx[k].length);
+  if(keys.length){const r=document.createElement('div');r.className='rx';keys.forEach(k=>{const b=document.createElement('button');b.className='rc'+(rx[k].includes(me.uid)?' me':'');b.textContent=k+' '+rx[k].length;b.onclick=()=>toggleReaction(m,k);r.append(b)});body.append(r)}
+  row.append(av,body);
+  const acts=document.createElement('div');acts.className='acts';
+  const mk=(t,f,react)=>{const b=document.createElement('button');b.textContent=t;if(react)b.dataset.react='1';b.onclick=ev=>{ev.stopPropagation();f(ev)};acts.append(b)};
+  mk('React',ev=>openPicker(ev,m),true);mk('Reply',()=>startReply(m));
+  if(m.uid===me.uid)mk('Edit',()=>startEdit(m));
+  if(m.uid===me.uid||isStaff())mk('Delete',()=>{if(confirm('Delete this message?'))msgCol(srv,chan).doc(m.id).delete().catch(e=>toast(friendly(e)))});
+  row.append(acts);feed.append(row)});
+ applySearch();
+ if(atBottom)feed.scrollTop=feed.scrollHeight;
+}
+function applySearch(){const q=$('searchIn').value.trim().toLowerCase();document.querySelectorAll('#feed .msg').forEach(r=>{r.style.display=(!q||r.dataset.text.includes(q))?'':'none'})}
+/* reactions */
+function closePicker(){document.querySelectorAll('.picker').forEach(p=>p.remove())}
+function openPicker(ev,m){closePicker();const p=document.createElement('div');p.className='picker';
+ EMOJIS.forEach(x=>{const b=document.createElement('button');b.textContent=x;b.onclick=()=>{toggleReaction(m,x);closePicker()};p.append(b)});
+ document.body.append(p);const r=ev.target.getBoundingClientRect();p.style.top=Math.min(window.innerHeight-130,r.bottom+4)+'px';p.style.left=Math.max(8,Math.min(window.innerWidth-300,r.left-200))+'px'}
+function toggleReaction(m,emoji){
+ const has=(m.reactions&&m.reactions[emoji]||[]).includes(me.uid);
+ const fv=firebase.firestore.FieldValue;
+ msgCol(srv,chan).doc(m.id).update(new firebase.firestore.FieldPath('reactions',emoji),has?fv.arrayRemove(me.uid):fv.arrayUnion(me.uid)).catch(e=>toast(friendly(e)));
+}
+/* reply / edit */
+function startReply(m){cancelEdit();replyTo={id:m.id,name:m.name||'User',text:(m.content||'').slice(0,80)};$('replyTxt').textContent='Replying to '+replyTo.name+': '+replyTo.text;$('replyBar').style.display='flex';$('msgIn').focus()}
+function cancelReply(){replyTo=null;$('replyBar').style.display='none'}
+function startEdit(m){cancelReply();editing=m.id;$('msgIn').value=m.content||'';$('editBar').style.display='flex';$('msgIn').focus()}
+function cancelEdit(){if(editing){$('msgIn').value=''}editing=null;$('editBar').style.display='none'}
+/* typing */
+function pingTyping(){
+ if(!me||Date.now()-lastTypingWrite<3000||!$('msgIn').value.trim())return;lastTypingWrite=Date.now();
+ chatApps[srv].db.collection('rooms').doc(chan).collection('typing').doc(me.uid).set({name:myProfile.displayName||'User',at:firebase.firestore.FieldValue.serverTimestamp()}).catch(()=>{});
+}
+function clearTyping(){if(!me)return;lastTypingWrite=0;try{chatApps[srv].db.collection('rooms').doc(chan).collection('typing').doc(me.uid).delete().catch(()=>{})}catch(e){}}
+function renderTyping(){
+ const now=Date.now();const names=Object.values(typingMap).filter(t=>now-t.at<6000).map(t=>t.name);
+ $('typing').textContent=!names.length?'':(names.length===1?names[0]+' is typing...':names.length===2?names.join(' and ')+' are typing...':'Several people are typing...');
+}
+/* send */
+let lastSend=0;
+function writeWithTimeout(ref,data){return new Promise((resolve,reject)=>{let done=false;
+ const t=setTimeout(()=>{if(done)return;done=true;ref.delete().catch(()=>{});reject(new Error('Server did not accept the message in time (quota or connection).'))},8000);
+ ref.set(data).then(()=>{if(done)return;done=true;clearTimeout(t);resolve()},err=>{if(done)return;done=true;clearTimeout(t);reject(err)})})}
+async function sendMessage(announce){
+ const inp=$('msgIn'),text=inp.value.trim(),st=$('sendStatus');
+ if(!text||!me)return;
+ if(text.length>2000)return st.textContent='Message is too long (2000 max).';
+ if(editing){
+  const id=editing;try{await msgCol(srv,chan).doc(id).update({content:text,edited:true});cancelEdit();inp.value='';st.textContent=''}catch(e){st.textContent=friendly(e)}return}
+ if(Date.now()-lastSend<800)return;lastSend=Date.now();
+ const c=CHANNELS.find(x=>x.id===chan);
+ inp.value='';inp.style.height='auto';st.textContent='Sending...';clearTyping();
+ const rt=replyTo;cancelReply();
+ try{
+  await ensureChatAuth(srv);
+  const ref=msgCol(srv,chan).doc();
+  const data={uid:me.uid,authUid:chatApps[srv].auth.currentUser.uid,name:myProfile.displayName||'User',role:myProfile.role||'member',content:text,isAnnouncement:!!(announce&&isStaff()),createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(rt)data.replyTo=rt;
+  await writeWithTimeout(ref,data);
+  st.textContent=c&&c.ai?'(AI replies are not connected yet.)':'';
+ }catch(e){inp.value=text;st.textContent=friendly(e)}
+}
+async function changeName(){
+ const n=$('newName').value.trim(),m=$('nameMsg');if(n.length<2||n.length>20)return m.textContent='2-20 characters.';
+ try{await db.collection('users').doc(me.uid).update({displayName:n});await me.updateProfile({displayName:n});myProfile.displayName=n;renderMe();m.textContent='Updated.';$('newName').value=''}catch(e){m.textContent=friendly(e)}
+}
+async function loadPeople(){
+ const el=$('peopleList');el.textContent='Loading...';
+ try{const s=await db.collection('users').orderBy('displayName').limit(200).get();el.innerHTML='';
+ s.forEach(d=>{const u=d.data();const r=document.createElement('div');r.className='row';const av=document.createElement('div');av.className='av';av.textContent=(u.displayName||'?')[0].toUpperCase();
+ const g=document.createElement('div');g.className='grow';g.textContent=u.displayName||'User';const t=document.createElement('span');t.className='tag '+(u.role||'member');t.textContent=u.role||'member';g.append(t);r.append(av,g);el.append(r)})}catch(e){el.textContent=friendly(e)}
+}
+async function loadAdmin(){
+ const el=$('adminList');el.textContent='Loading...';
+ try{const s=await db.collection('users').orderBy('displayName').limit(200).get();el.innerHTML='';
+ s.forEach(d=>{const u=d.data();const r=document.createElement('div');r.className='row';const g=document.createElement('div');g.className='grow';g.textContent=(u.displayName||'User')+' - '+(u.email||'');
+ const sel=document.createElement('select');['member','mod','admin','owner'].forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;if(x===u.role)o.selected=true;sel.append(o)});
+ if(isOwnerEmail(u.email))sel.disabled=true;
+ sel.onchange=async()=>{try{await d.ref.update({role:sel.value});toast('Role updated')}catch(e){toast(friendly(e));sel.value=u.role}};
+ const ban=document.createElement('button');ban.className='btn '+(u.banned?'':'danger');ban.textContent=u.banned?'Unban':'Ban';if(isOwnerEmail(u.email))ban.disabled=true;
+ ban.onclick=async()=>{try{await d.ref.update({banned:!u.banned});toast(u.banned?'Unbanned':'Banned');loadAdmin()}catch(e){toast(friendly(e))}};
+ r.append(g,sel,ban);el.append(r)})}catch(e){el.textContent=friendly(e)}
+}
+auth.onAuthStateChanged(u=>{if(signingUp)return;if(!u){me=null;myProfile=null;setMode('in');show('authScreen')}else boot(u).catch(e=>{console.error(e);toast(friendly(e))})});
+setMode('in');
+</script></body></html>
