@@ -69,15 +69,14 @@ jobs:
           python -m py_compile firestore_worker.py firestore_http.py test_firestore_worker.py
           python -m unittest discover -v
 
-      - name: Validate secrets
+      -       - name: Validate secrets
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          FIREBASE_KEYS: ${{ secrets.FIREBASE_KEYS }}
         run: |
           [ -n "$GROQ_API_KEY" ] || { echo "Missing repository secret: GROQ_API_KEY"; exit 1; }
-
-          [ -n "$GROQ_API_KEY" ] || { echo "Missing secret: GROQ_API_KEY"; exit 1; }
+          [ -n "$FIREBASE_KEYS" ] || { echo "Missing repository secret: FIREBASE_KEYS"; exit 1; }
           python -c "import json,os; d=json.loads(os.environ['FIREBASE_KEYS']); assert d, 'empty'" || { echo "FIREBASE_KEYS must be valid JSON"; exit 1; }
-
       - name: Run characters
         env:
           FIREBASE_KEYS: ${{ secrets.FIREBASE_KEYS }}
