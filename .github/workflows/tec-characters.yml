@@ -75,6 +75,9 @@ jobs:
         run: |
           [ -n "$GROQ_API_KEY" ] || { echo "Missing repository secret: GROQ_API_KEY"; exit 1; }
 
+          [ -n "$GROQ_API_KEY" ] || { echo "Missing secret: GROQ_API_KEY"; exit 1; }
+          python -c "import json,os; d=json.loads(os.environ['FIREBASE_KEYS']); assert d, 'empty'" || { echo "FIREBASE_KEYS must be valid JSON"; exit 1; }
+
       - name: Run characters
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
