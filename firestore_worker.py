@@ -16,13 +16,21 @@ import httpx
 from firestore_http import error_detail, fetch, retry_after
 
 # Public web API keys (the same values that are in the TEC page).
-PROJECT_KEYS = {
-    "tec-chat1": "AIzaSyA4LLeRoOsn75Mzs6orIq-orHvSl_Ta7ug",
-    "tec-chat2": "AIzaSyDRrqm2BMs3bGiRBtZ8S0zj-Uv-Enk5Xxc",
-    "tec-chat3": "AIzaSyAn8QQDuuj5RaRb6A8lIetZRKAe-nZ_skE",
-    "tec-chat4": "AIzaSyASriwP6yjf_cb9f81RXsVsCFMTSoP3H5Q",
-    "tec-chat5": "AIzaSyCNq3x5AdTFtmHlR8Oqmy84Nd0pmRWQRC4",
-}
+def _load_keys():
+    try:
+        data = json.loads(os.getenv("FIREBASE_KEYS", ""))
+    except ValueError:
+        data = {}
+    if not isinstance(data, dict):
+        return {}
+    return {
+        k: v for k, v in data.items()
+        if isinstance(k, str) and k.startswith("tec-chat")
+        and isinstance(v, str) and v
+    }
+
+
+PROJECT_KEYS = _load_keys()
 
 
 def _servers():
